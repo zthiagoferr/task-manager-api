@@ -4,6 +4,7 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.141-green.svg)](https://fastapi.tiangolo.com)
 [![Tests](https://img.shields.io/badge/tests-14%20passing-brightgreen.svg)](tests/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Deploy](https://img.shields.io/badge/deploy-Railway-6C47FF.svg)](https://api-production-a5a84.up.railway.app/docs)
 
 API REST para gerenciamento de tarefas com autenticacao JWT, documentacao automatica e containerizacao.
 
