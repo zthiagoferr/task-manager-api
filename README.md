@@ -133,3 +133,13 @@ app/
 ```
 
 Documentacao completa em [ARQUITETURA.md](ARQUITETURA.md).
+
+---
+
+## Autor
+
+**Thiago Ferreira de Oliveira**
+
+- GitHub: [@zthiagoferr](https://github.com/zthiagoferr)
+- GitLab: [@thia80.ferreira](https://gitlab.com/thia80.ferreira)
+- Email: contato.thiagofo@icloud.com

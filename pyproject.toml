@@ -1,0 +1,15 @@
+[project]
+name = "task-manager-api"
+version = "1.0.0"
+description = "API REST de gerenciamento de tarefas com FastAPI, JWT, Docker e app desktop"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Thiago Ferreira de Oliveira", email = "contato.thiagofo@icloud.com" },
+]
+requires-python = ">=3.12"
+urls = { Repository = "https://github.com/zthiagoferr/task-manager-api" }
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
