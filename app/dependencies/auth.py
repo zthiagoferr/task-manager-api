@@ -22,8 +22,8 @@ async def get_current_user(
     )
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-        user_id: int = payload.get("user_id")
-        if user_id is None:
+        user_id = payload.get("user_id")
+        if user_id is None or not isinstance(user_id, int):
             raise credentials_exception
     except JWTError:
         raise credentials_exception

@@ -110,7 +110,7 @@ class LoginWindow(ctk.CTk):
         try:
             API.login(vals["email"], vals["password"])
             self._status("Conectado com sucesso!", COLORS["accent"])
-            self.after(400, self._open_main)
+            self._pending_open = self.after(400, self._open_main)
         except RuntimeError as e:
             self._status(str(e), COLORS["danger"])
 
@@ -131,8 +131,11 @@ class LoginWindow(ctk.CTk):
             self._status(str(e), COLORS["danger"])
 
     def _open_main(self):
-        self.destroy()
-        MainWindow().mainloop()
+        try:
+            self.destroy()
+            MainWindow().mainloop()
+        except Exception:
+            pass
 
     def _status(self, text: str, color: str):
         self.status_label.configure(text=text, text_color=color)
@@ -479,12 +482,6 @@ def main():
     try:
         app = LoginWindow()
         app.mainloop()
-    except RuntimeError:
-        messagebox.showerror("Erro de conexao",
-                             "Nao foi possivel conectar ao servidor.\n\n"
-                             "Certifique-se de que o servidor esta rodando:\n"
-                             "  make run\n\n"
-                             "Execute em outro terminal e tente novamente.")
     except Exception as e:
         messagebox.showerror("Erro inesperado", str(e))
 

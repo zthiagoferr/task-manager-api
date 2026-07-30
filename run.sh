@@ -33,4 +33,8 @@ echo ""
 
 fuser -k 8000/tcp 2>/dev/null || true
 
+echo "Executando migracoes..."
+alembic upgrade head
+
+echo ""
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000

@@ -1,13 +1,11 @@
 from datetime import datetime
-from pydantic import BaseModel, EmailStr, ConfigDict
+from pydantic import BaseModel, EmailStr, ConfigDict, Field
 
 
 class UserCreate(BaseModel):
     email: EmailStr
-    username: str
-    password: str
-
-    model_config = ConfigDict(str_min_length=3)
+    username: str = Field(min_length=3, max_length=100)
+    password: str = Field(min_length=3, max_length=72)
 
 
 class UserLogin(BaseModel):

@@ -8,6 +8,8 @@ from app.schemas.task import TaskCreate, TaskUpdate
 
 
 async def create_task(db: AsyncSession, owner_id: int, task_data: TaskCreate) -> Task:
+    if not task_data.title.strip():
+        raise ValueError("O titulo da tarefa nao pode estar vazio.")
     task = Task(
         title=task_data.title,
         description=task_data.description,
@@ -47,7 +49,11 @@ async def update_task(
     db: AsyncSession, task: Task, task_data: TaskUpdate
 ) -> Task:
     update_data = task_data.model_dump(exclude_unset=True)
+    if not update_data:
+        return task
     for key, value in update_data.items():
+        if key == "title" and (value is None or not value.strip()):
+            raise ValueError("O titulo da tarefa nao pode estar vazio.")
         setattr(task, key, value)
     task.updated_at = datetime.now(timezone.utc)
     await db.commit()

@@ -51,7 +51,12 @@ async def register_user(db: AsyncSession, user_data: UserCreate) -> User:
 async def authenticate_user(db: AsyncSession, email: str, password: str) -> User | None:
     result = await db.execute(select(User).where(User.email == email))
     user = result.scalar_one_or_none()
-    if not user or not verify_password(password, user.hashed_password):
+    if not user:
+        return None
+    try:
+        if not verify_password(password, user.hashed_password):
+            return None
+    except ValueError:
         return None
     return user
 

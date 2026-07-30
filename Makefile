@@ -21,6 +21,9 @@ install:
 run:
 	@if [ ! -f .env ]; then cp .env.example .env; fi
 	@fuser -k 8000/tcp 2>/dev/null || true
+	@echo "Executando migracoes..."
+	. .venv/bin/activate && alembic upgrade head
+	@echo ""
 	@echo "Iniciando servidor em http://localhost:8000"
 	@echo "Swagger em http://localhost:8000/docs"
 	@echo ""

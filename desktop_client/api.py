@@ -1,6 +1,7 @@
 import requests
 
 BASE_URL = "http://localhost:8000/api/v1"
+REQUEST_TIMEOUT = 10
 
 
 class TaskAPIClient:
@@ -15,28 +16,48 @@ class TaskAPIClient:
             headers["Authorization"] = f"Bearer {self.token}"
         return headers
 
+    def _request(self, method: str, path: str, **kwargs) -> requests.Response:
+        kwargs.setdefault("timeout", REQUEST_TIMEOUT)
+        url = f"{self.base_url}{path}"
+        try:
+            return requests.request(method, url, **kwargs)
+        except requests.exceptions.ConnectionError:
+            raise RuntimeError(
+                "Servidor indisponivel. Certifique-se de que 'make run' esta rodando em outro terminal."
+            )
+        except requests.exceptions.Timeout:
+            raise RuntimeError(
+                "Tempo de conexao esgotado. O servidor pode estar sobrecarregado."
+            )
+
     def register(self, email: str, username: str, password: str) -> dict:
-        resp = requests.post(
-            f"{self.base_url}/auth/register",
+        resp = self._request(
+            "POST", "/auth/register",
             json={"email": email, "username": username, "password": password},
         )
         return self._handle_response(resp)
 
     def login(self, email: str, password: str) -> dict:
-        resp = requests.post(
-            f"{self.base_url}/auth/login",
+        resp = self._request(
+            "POST", "/auth/login",
             json={"email": email, "password": password},
         )
         data = self._handle_response(resp)
-        self.token = data.get("access_token")
-        if self.token:
-            user = self._get_me()
-            self.is_admin = user.get("is_admin", False)
+        token = data.get("access_token")
+        if token:
+            self.token = token
+            try:
+                user = self._get_me()
+                self.is_admin = user.get("is_admin", False)
+            except RuntimeError:
+                self.token = None
+                self.is_admin = False
+                raise
         return data
 
     def _get_me(self) -> dict:
-        resp = requests.get(
-            f"{self.base_url}/auth/me",
+        resp = self._request(
+            "GET", "/auth/me",
             headers=self._headers(),
         )
         return self._handle_response(resp)
@@ -45,39 +66,39 @@ class TaskAPIClient:
         params = {}
         if status:
             params["status_filter"] = status
-        resp = requests.get(
-            f"{self.base_url}/tasks/",
+        resp = self._request(
+            "GET", "/tasks/",
             headers=self._headers(),
             params=params,
         )
         return self._handle_response(resp)
 
     def create_task(self, title: str, description: str = "", status: str = "pending") -> dict:
-        resp = requests.post(
-            f"{self.base_url}/tasks/",
+        resp = self._request(
+            "POST", "/tasks/",
             headers=self._headers(),
             json={"title": title, "description": description, "status": status},
         )
         return self._handle_response(resp)
 
     def update_task(self, task_id: int, **kwargs) -> dict:
-        resp = requests.put(
-            f"{self.base_url}/tasks/{task_id}",
+        resp = self._request(
+            "PUT", f"/tasks/{task_id}",
             headers=self._headers(),
             json=kwargs,
         )
         return self._handle_response(resp)
 
-    def delete_task(self, task_id: int) -> bool:
-        resp = requests.delete(
-            f"{self.base_url}/tasks/{task_id}",
+    def delete_task(self, task_id: int) -> None:
+        resp = self._request(
+            "DELETE", f"/tasks/{task_id}",
             headers=self._headers(),
         )
-        return resp.status_code == 204
+        self._handle_response(resp)
 
     def list_users(self) -> list[dict]:
-        resp = requests.get(
-            f"{self.base_url}/admin/users",
+        resp = self._request(
+            "GET", "/admin/users",
             headers=self._headers(),
         )
         return self._handle_response(resp)
@@ -85,6 +106,11 @@ class TaskAPIClient:
     @staticmethod
     def _handle_response(resp: requests.Response) -> dict:
         if resp.status_code >= 400:
-            detail = resp.json().get("detail", "Erro desconhecido")
+            try:
+                detail = resp.json().get("detail", "Erro desconhecido")
+            except requests.exceptions.JSONDecodeError:
+                detail = f"Erro HTTP {resp.status_code}"
             raise RuntimeError(detail)
+        if resp.status_code == 204:
+            return {}
         return resp.json()

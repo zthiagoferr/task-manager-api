@@ -1,8 +1,6 @@
 import logging
 from contextlib import asynccontextmanager
 
-from alembic import command
-from alembic.config import Config
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -20,8 +18,6 @@ logger = logging.getLogger("task_manager")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    async with engine.begin() as conn:
-        await conn.run_sync(_run_migrations)
     async with async_session() as db:
         await seed_admin(db)
     logger.info("Aplicacao iniciada")
@@ -30,17 +26,11 @@ async def lifespan(app: FastAPI):
     logger.info("Aplicacao encerrada")
 
 
-def _run_migrations(connection):
-    alembic_cfg = Config("alembic.ini")
-    alembic_cfg.attributes["connection"] = connection
-    command.upgrade(alembic_cfg, "head")
-
-
 app = FastAPI(title="Task Manager API", version="1.0.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:8000", "http://127.0.0.1:8000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
