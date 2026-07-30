@@ -141,6 +141,7 @@ Documentacao completa em [ARQUITETURA.md](ARQUITETURA.md).
 
 **Thiago Ferreira de Oliveira**
 
+- Workana: [Meu perfil](https://www.workana.com/freelancer/30dd66d7125340ae03b9fd6c47e2a4dc)
 - GitHub: [@zthiagoferr](https://github.com/zthiagoferr)
 - GitLab: [@thia80.ferreira](https://gitlab.com/thia80.ferreira)
 - Email: contato.thiagofo@icloud.com
