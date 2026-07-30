@@ -1,3 +1,4 @@
+from typing import Any
 import requests
 
 BASE_URL = "http://localhost:8000/api/v1"
@@ -104,7 +105,7 @@ class TaskAPIClient:
         return self._handle_response(resp)
 
     @staticmethod
-    def _handle_response(resp: requests.Response):
+    def _handle_response(resp: requests.Response) -> Any:
         if resp.status_code >= 400:
             try:
                 detail = resp.json().get("detail", "Erro desconhecido")
