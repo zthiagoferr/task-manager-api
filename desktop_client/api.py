@@ -104,7 +104,7 @@ class TaskAPIClient:
         return self._handle_response(resp)
 
     @staticmethod
-    def _handle_response(resp: requests.Response) -> dict:
+    def _handle_response(resp: requests.Response):
         if resp.status_code >= 400:
             try:
                 detail = resp.json().get("detail", "Erro desconhecido")
