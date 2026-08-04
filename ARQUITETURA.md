@@ -8,7 +8,7 @@ Task Manager API e uma API REST para gerenciamento de tarefas pessoais com auten
 - **Linguagem:** Python 3.12+
 - **Licenca:** MIT
 - **Autor:** Thiago Ferreira de Oliveira
-- **Deploy:** Railway (`https://api-production-a5a84.up.railway.app`)
+- **Deploy:** Render (`https://task-manager-a421.onrender.com`)
 
 ---
 
@@ -352,7 +352,9 @@ docker compose up -d
 railway up
 ```
 
-Deploy em producao: `https://api-production-a5a84.up.railway.app`
+### Render
+
+Deploy em producao: `https://task-manager-a421.onrender.com`
 
 ---
 
